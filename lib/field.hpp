@@ -296,13 +296,15 @@ FP2_BINARY_OPERATOR(
 FP2_BINARY_OPERATOR(
     mul, *,
     {
-        if (mod::P<T>() % 4 == 3)
-            return Fp2<T>(sub(mul(lhs.a, rhs.a), mul(lhs.b, rhs.b)),
-                          add(mul(lhs.a, rhs.b), mul(lhs.b, rhs.a)));
-        else
+        if (mod::P<T>() % 4 == 3) {
+            Fp<T> x = mul(lhs.a, rhs.b);
+            Fp<T> y = mul(lhs.b, rhs.a);
+            return Fp2<T>((lhs.a - lhs.b) * (rhs.a + rhs.b) + y - x, x + y);
+        } else {
             return Fp2<T>(
                 add(mul(lhs.a, rhs.a), mul(mod::beta<T>(), mul(lhs.b, rhs.b))),
                 add(mul(lhs.a, rhs.b), mul(lhs.b, rhs.a)));
+        }
     },
     { return Fp2<T>(mul(lhs.a, rhs.a), mul(lhs.b, rhs.a)); },
     { return Fp2<T>(mul(lhs.a, rhs.a), mul(lhs.a, rhs.b)); })
